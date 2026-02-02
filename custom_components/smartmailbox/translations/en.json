@@ -9,7 +9,10 @@
           "tuer_entity": "Door sensor (retrieval door)",
           "debounce_seconds": "Debounce time (seconds)",
           "notify": "Enable push notifications",
-          "notify_service": "Notification service"
+          "notify_service": "Notification service(s)"
+        },
+        "data_description": {
+          "notify_service": "Comma-separated list for multiple services (e.g. notify.mobile_app_iphone, notify.telegram)"
         }
       }
     },
@@ -26,13 +29,14 @@
           "tuer_entity": "Door sensor (retrieval door)",
           "debounce_seconds": "Debounce time (seconds)",
           "notify": "Enable push notifications",
-          "notify_service": "Notification service",
+          "notify_service": "Notification service(s)",
           "enable_counter": "Enable delivery counter",
           "enable_age": "Enable mail age sensor",
           "age_unit": "Age unit",
           "reset_on_empty": "Reset counter when emptied"
         },
         "data_description": {
+          "notify_service": "Comma-separated list for multiple services (e.g. notify.mobile_app_iphone, notify.telegram)",
           "age_unit": "Display mail age in hours or days"
         }
       }

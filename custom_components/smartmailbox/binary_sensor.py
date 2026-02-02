@@ -72,10 +72,11 @@ class BriefkastenPostSensor(BinarySensorEntity):
                 # Push only once per "post_present period"
                 if not self._state_ref.notified_for_current_post:
                     notify_enabled = self.entry.options.get(CONF_NOTIFY_ENABLED, self.entry.data.get(CONF_NOTIFY_ENABLED, False))
-                    notify_service = self.entry.options.get(CONF_NOTIFY_SERVICE, self.entry.data.get(CONF_NOTIFY_SERVICE, "notify.notify"))
-                    if notify_enabled:
-                        domain, service = notify_service.split(".", 1) if "." in notify_service else ("notify", notify_service)
-                        self.hass.services.call(domain, service, {"message": "📬 Neue Post im Briefkasten!"}, blocking=False)
+                    notify_services = self.entry.options.get(CONF_NOTIFY_SERVICE, self.entry.data.get(CONF_NOTIFY_SERVICE, "notify.notify"))
+                    if notify_enabled and notify_services:
+                        for notify_service in [s.strip() for s in notify_services.split(",") if s.strip()]:
+                            domain, service = notify_service.split(".", 1) if "." in notify_service else ("notify", notify_service)
+                            self.hass.services.call(domain, service, {"message": "📬 Neue Post im Briefkasten!"}, blocking=False)
                     self._state_ref.notified_for_current_post = True
 
                 # Counter increments on every accepted klappe event

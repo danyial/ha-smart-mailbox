@@ -9,7 +9,10 @@
           "tuer_entity": "Tür-Sensor (Entnahme)",
           "debounce_seconds": "Entprellzeit (Sekunden)",
           "notify": "Push-Benachrichtigungen aktivieren",
-          "notify_service": "Benachrichtigungsdienst"
+          "notify_service": "Benachrichtigungsdienst(e)"
+        },
+        "data_description": {
+          "notify_service": "Kommagetrennte Liste für mehrere Dienste (z.B. notify.mobile_app_iphone, notify.telegram)"
         }
       }
     },
@@ -26,13 +29,14 @@
           "tuer_entity": "Tür-Sensor (Entnahme)",
           "debounce_seconds": "Entprellzeit (Sekunden)",
           "notify": "Push-Benachrichtigungen aktivieren",
-          "notify_service": "Benachrichtigungsdienst",
+          "notify_service": "Benachrichtigungsdienst(e)",
           "enable_counter": "Einwurf-Zähler aktivieren",
           "enable_age": "Post-Alter-Sensor aktivieren",
           "age_unit": "Alter-Einheit",
           "reset_on_empty": "Zähler bei Leerung zurücksetzen"
         },
         "data_description": {
+          "notify_service": "Kommagetrennte Liste für mehrere Dienste (z.B. notify.mobile_app_iphone, notify.telegram)",
           "age_unit": "Post-Alter in Stunden oder Tagen anzeigen"
         }
       }
