@@ -1,0 +1,74 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Smart Mailbox Setup",
+        "description": "Configure your smart mailbox sensors.",
+        "data": {
+          "klappe_entity": "Flap sensor (mail slot)",
+          "tuer_entity": "Door sensor (retrieval door)",
+          "debounce_seconds": "Debounce time (seconds)",
+          "notify": "Enable push notifications",
+          "notify_service": "Notification service"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "Smart Mailbox is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Smart Mailbox Options",
+        "data": {
+          "klappe_entity": "Flap sensor (mail slot)",
+          "tuer_entity": "Door sensor (retrieval door)",
+          "debounce_seconds": "Debounce time (seconds)",
+          "notify": "Enable push notifications",
+          "notify_service": "Notification service",
+          "enable_counter": "Enable delivery counter",
+          "enable_age": "Enable mail age sensor",
+          "age_unit": "Age unit",
+          "reset_on_empty": "Reset counter when emptied"
+        },
+        "data_description": {
+          "age_unit": "Display mail age in hours or days"
+        }
+      }
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "post": {
+        "name": "Mail"
+      }
+    },
+    "sensor": {
+      "letzter_einwurf": {
+        "name": "Last delivery"
+      },
+      "letzte_leerung": {
+        "name": "Last emptied"
+      },
+      "einwurf_zaehler": {
+        "name": "Delivery counter"
+      },
+      "post_liegt_seit": {
+        "name": "Mail age"
+      }
+    }
+  },
+  "services": {
+    "reset_counter": {
+      "name": "Reset counter",
+      "description": "Resets the delivery counter to zero.",
+      "fields": {
+        "entry_id": {
+          "name": "Config entry ID",
+          "description": "Optional: Specify which mailbox instance to reset."
+        }
+      }
+    }
+  }
+}

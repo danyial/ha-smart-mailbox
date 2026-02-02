@@ -1,0 +1,74 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Smart Mailbox einrichten",
+        "description": "Konfiguriere deine Briefkasten-Sensoren.",
+        "data": {
+          "klappe_entity": "Klappen-Sensor (Einwurf)",
+          "tuer_entity": "Tür-Sensor (Entnahme)",
+          "debounce_seconds": "Entprellzeit (Sekunden)",
+          "notify": "Push-Benachrichtigungen aktivieren",
+          "notify_service": "Benachrichtigungsdienst"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "Smart Mailbox ist bereits konfiguriert."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Smart Mailbox Optionen",
+        "data": {
+          "klappe_entity": "Klappen-Sensor (Einwurf)",
+          "tuer_entity": "Tür-Sensor (Entnahme)",
+          "debounce_seconds": "Entprellzeit (Sekunden)",
+          "notify": "Push-Benachrichtigungen aktivieren",
+          "notify_service": "Benachrichtigungsdienst",
+          "enable_counter": "Einwurf-Zähler aktivieren",
+          "enable_age": "Post-Alter-Sensor aktivieren",
+          "age_unit": "Alter-Einheit",
+          "reset_on_empty": "Zähler bei Leerung zurücksetzen"
+        },
+        "data_description": {
+          "age_unit": "Post-Alter in Stunden oder Tagen anzeigen"
+        }
+      }
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "post": {
+        "name": "Post"
+      }
+    },
+    "sensor": {
+      "letzter_einwurf": {
+        "name": "Letzter Einwurf"
+      },
+      "letzte_leerung": {
+        "name": "Letzte Leerung"
+      },
+      "einwurf_zaehler": {
+        "name": "Einwurf-Zähler"
+      },
+      "post_liegt_seit": {
+        "name": "Post liegt seit"
+      }
+    }
+  },
+  "services": {
+    "reset_counter": {
+      "name": "Zähler zurücksetzen",
+      "description": "Setzt den Einwurf-Zähler auf Null zurück.",
+      "fields": {
+        "entry_id": {
+          "name": "Config Entry ID",
+          "description": "Optional: Angabe welche Briefkasten-Instanz zurückgesetzt werden soll."
+        }
+      }
+    }
+  }
+}
