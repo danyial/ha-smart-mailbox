@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from datetime import timedelta
 
 from homeassistant.components.binary_sensor import BinarySensorEntity
@@ -8,6 +9,8 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.event import async_track_state_change_event
 from homeassistant.util import dt as dt_util
+
+_LOGGER = logging.getLogger(__name__)
 
 from .const import (
     DOMAIN,
@@ -74,11 +77,7 @@ class BriefkastenPostSensor(BinarySensorEntity):
                     notify_enabled = self.entry.options.get(CONF_NOTIFY_ENABLED, self.entry.data.get(CONF_NOTIFY_ENABLED, False))
                     notify_services = self.entry.options.get(CONF_NOTIFY_SERVICE, self.entry.data.get(CONF_NOTIFY_SERVICE, "notify.notify"))
                     if notify_enabled and notify_services:
-                        for notify_service in [s.strip() for s in notify_services.split(",") if s.strip()]:
-                            domain, service = notify_service.split(".", 1) if "." in notify_service else ("notify", notify_service)
-                            self.hass.async_create_task(
-                                self.hass.services.async_call(domain, service, {"message": "📬 Neue Post im Briefkasten!"})
-                            )
+                        self._send_notifications(notify_services)
                     self._state_ref.notified_for_current_post = True
 
                 # Counter increments on every accepted klappe event
@@ -106,6 +105,26 @@ class BriefkastenPostSensor(BinarySensorEntity):
         if self._unsub:
             self._unsub()
             self._unsub = None
+
+    @callback
+    def _send_notifications(self, notify_services: str) -> None:
+        """Send notifications to configured services."""
+        for notify_service in [s.strip() for s in notify_services.split(",") if s.strip()]:
+            try:
+                if "." in notify_service:
+                    domain, service = notify_service.split(".", 1)
+                else:
+                    domain, service = "notify", notify_service
+                _LOGGER.debug("Sending notification via %s.%s", domain, service)
+                self.hass.async_create_task(
+                    self.hass.services.async_call(
+                        domain, service,
+                        {"message": "📬 Neue Post im Briefkasten!"},
+                        blocking=False,
+                    )
+                )
+            except Exception as err:
+                _LOGGER.error("Failed to send notification via %s: %s", notify_service, err)
 
     @property
     def is_on(self) -> bool:
