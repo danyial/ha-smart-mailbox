@@ -76,7 +76,9 @@ class BriefkastenPostSensor(BinarySensorEntity):
                     if notify_enabled and notify_services:
                         for notify_service in [s.strip() for s in notify_services.split(",") if s.strip()]:
                             domain, service = notify_service.split(".", 1) if "." in notify_service else ("notify", notify_service)
-                            self.hass.services.call(domain, service, {"message": "📬 Neue Post im Briefkasten!"}, blocking=False)
+                            self.hass.async_create_task(
+                                self.hass.services.async_call(domain, service, {"message": "📬 Neue Post im Briefkasten!"})
+                            )
                     self._state_ref.notified_for_current_post = True
 
                 # Counter increments on every accepted klappe event
