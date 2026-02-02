@@ -61,6 +61,14 @@
       "post_liegt_seit": {
         "name": "Mail age"
       }
+    },
+    "button": {
+      "reset_counter": {
+        "name": "Reset counter"
+      },
+      "mark_empty": {
+        "name": "Mark as empty"
+      }
     }
   },
   "services": {

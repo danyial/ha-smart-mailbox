@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 DOMAIN = "smartmailbox"
-PLATFORMS = ["binary_sensor", "sensor"]
+PLATFORMS = ["binary_sensor", "sensor", "button"]
 
 # Default source entities (can be changed via config/options flow)
 DEFAULT_KLAPPE_ENTITY = "binary_sensor.briefkasten_klappe_offnung"

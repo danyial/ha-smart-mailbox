@@ -61,6 +61,14 @@
       "post_liegt_seit": {
         "name": "Post liegt seit"
       }
+    },
+    "button": {
+      "reset_counter": {
+        "name": "Zähler zurücksetzen"
+      },
+      "mark_empty": {
+        "name": "Als geleert markieren"
+      }
     }
   },
   "services": {
