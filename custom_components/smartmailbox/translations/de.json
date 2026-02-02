@@ -81,6 +81,16 @@
           "description": "Optional: Angabe welche Briefkasten-Instanz zurückgesetzt werden soll."
         }
       }
+    },
+    "mark_empty": {
+      "name": "Als geleert markieren",
+      "description": "Markiert den Briefkasten als leer (keine Post vorhanden).",
+      "fields": {
+        "entry_id": {
+          "name": "Config Entry ID",
+          "description": "Optional: Angabe welche Briefkasten-Instanz als geleert markiert werden soll."
+        }
+      }
     }
   }
 }

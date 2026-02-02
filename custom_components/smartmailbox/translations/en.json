@@ -81,6 +81,16 @@
           "description": "Optional: Specify which mailbox instance to reset."
         }
       }
+    },
+    "mark_empty": {
+      "name": "Mark as empty",
+      "description": "Marks the mailbox as empty (no mail present).",
+      "fields": {
+        "entry_id": {
+          "name": "Config entry ID",
+          "description": "Optional: Specify which mailbox instance to mark as empty."
+        }
+      }
     }
   }
 }

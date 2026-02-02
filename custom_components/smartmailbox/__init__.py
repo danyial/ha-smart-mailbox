@@ -14,6 +14,7 @@ from homeassistant.helpers.dispatcher import async_dispatcher_send
 from .const import (
     DOMAIN, PLATFORMS,
     SERVICE_RESET_COUNTER,
+    SERVICE_MARK_EMPTY,
     SIGNAL_PREFIX,
     STORAGE_KEY_PREFIX, STORAGE_VERSION,
 )
@@ -87,10 +88,27 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 data["save"]()
                 async_dispatcher_send(hass, f"{SIGNAL_PREFIX}{entry_id}")
 
+        async def handle_mark_empty(call: ServiceCall) -> None:
+            target_entry_id = call.data.get("entry_id")
+            for entry_id, data in list(hass.data[DOMAIN].items()):
+                if entry_id.startswith("_"):
+                    continue
+                if target_entry_id and target_entry_id != entry_id:
+                    continue
+                data["state"].post_present = False
+                data["state"].notified_for_current_post = False
+                data["save"]()
+                async_dispatcher_send(hass, f"{SIGNAL_PREFIX}{entry_id}")
+
         hass.services.async_register(
             DOMAIN,
             SERVICE_RESET_COUNTER,
             handle_reset_counter,
+        )
+        hass.services.async_register(
+            DOMAIN,
+            SERVICE_MARK_EMPTY,
+            handle_mark_empty,
         )
         hass.data[DOMAIN]["_service_registered"] = True
 
@@ -109,5 +127,6 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass.data[DOMAIN].pop(entry.entry_id, None)
         if not [k for k in hass.data[DOMAIN].keys() if not k.startswith("_")]:
             hass.services.async_remove(DOMAIN, SERVICE_RESET_COUNTER)
+            hass.services.async_remove(DOMAIN, SERVICE_MARK_EMPTY)
             hass.data[DOMAIN].pop("_service_registered", None)
     return unloaded

@@ -28,6 +28,7 @@ DEFAULT_AGE_UNIT = "hours"
 DEFAULT_RESET_ON_EMPTY = False
 
 SERVICE_RESET_COUNTER = "reset_counter"
+SERVICE_MARK_EMPTY = "mark_empty"
 
 # Dispatcher signal prefix
 SIGNAL_PREFIX = "smartmailbox_update_"
