@@ -1,0 +1,8 @@
+reset_counter:
+  name: Reset counter
+  description: Resets the delivery counter to zero.
+  fields:
+    entry_id:
+      name: Config entry ID
+      description: Optional: Specify which mailbox instance to reset.
+      example: 1234567890abcdef
