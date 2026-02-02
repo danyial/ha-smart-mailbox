@@ -6,7 +6,7 @@ from datetime import timedelta
 from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.helpers.dispatcher import async_dispatcher_send
+from homeassistant.helpers.dispatcher import async_dispatcher_send, async_dispatcher_connect
 from homeassistant.helpers.event import async_track_state_change_event
 from homeassistant.util import dt as dt_util
 
@@ -47,8 +47,15 @@ class BriefkastenPostSensor(BinarySensorEntity):
         self._save = hass.data[DOMAIN][entry.entry_id]["save"]
 
         self._unsub = None
+        self._unsub_dispatcher = None
 
     async def async_added_to_hass(self) -> None:
+        self._unsub_dispatcher = async_dispatcher_connect(
+            self.hass,
+            f"{SIGNAL_PREFIX}{self.entry.entry_id}",
+            self._handle_dispatcher_update,
+        )
+
         klappe = self.entry.options.get(CONF_KLAPPE_ENTITY, self.entry.data.get(CONF_KLAPPE_ENTITY))
         tuer = self.entry.options.get(CONF_TUER_ENTITY, self.entry.data.get(CONF_TUER_ENTITY))
 
@@ -105,6 +112,13 @@ class BriefkastenPostSensor(BinarySensorEntity):
         if self._unsub:
             self._unsub()
             self._unsub = None
+        if self._unsub_dispatcher:
+            self._unsub_dispatcher()
+            self._unsub_dispatcher = None
+
+    @callback
+    def _handle_dispatcher_update(self) -> None:
+        self.schedule_update_ha_state()
 
     @callback
     def _send_notifications(self, notify_services: str) -> None:
