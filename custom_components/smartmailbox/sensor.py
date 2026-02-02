@@ -113,6 +113,7 @@ class PostLiegtSeitSensor(_BriefkastenBaseSensor):
             self._unsub_time = None
         await super().async_will_remove_from_hass()
 
+    @callback
     def _handle_time_update(self, now):
         self.async_write_ha_state()
 
