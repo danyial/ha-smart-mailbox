@@ -62,7 +62,7 @@ class _BriefkastenBaseSensor(SensorEntity):
 
     @callback
     def _handle_update(self):
-        self.async_write_ha_state()
+        self.schedule_update_ha_state()
 
 class LetzterEinwurfSensor(_BriefkastenBaseSensor):
     _attr_name = "Letzter Einwurf"
@@ -115,7 +115,7 @@ class PostLiegtSeitSensor(_BriefkastenBaseSensor):
 
     @callback
     def _handle_time_update(self, now):
-        self.async_write_ha_state()
+        self.schedule_update_ha_state()
 
     @property
     def native_value(self):

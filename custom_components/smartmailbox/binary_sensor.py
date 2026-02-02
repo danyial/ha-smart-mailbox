@@ -96,7 +96,7 @@ class BriefkastenPostSensor(BinarySensorEntity):
 
             self._save()
             async_dispatcher_send(self.hass, f"{SIGNAL_PREFIX}{self.entry.entry_id}")
-            self.async_write_ha_state()
+            self.schedule_update_ha_state()
 
         self._unsub = async_track_state_change_event(self.hass, [klappe, tuer], _changed)
 
