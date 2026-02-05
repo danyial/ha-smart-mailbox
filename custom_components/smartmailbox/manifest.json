@@ -1,7 +1,7 @@
 {
   "domain": "smartmailbox",
   "name": "Smart Mailbox",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "documentation": "https://github.com/danyial/ha-smart-mailbox",
   "issue_tracker": "https://github.com/danyial/ha-smart-mailbox/issues",
   "requirements": [],
