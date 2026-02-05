@@ -5,6 +5,8 @@
 
 Home Assistant integration for smart mailboxes with flap and door sensors.
 
+![Smart Mailbox in Home Assistant](screenshot.png)
+
 ## Features
 
 - **Mail** (binary_sensor): Indicates whether mail is present in the mailbox
