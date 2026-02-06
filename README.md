@@ -2,6 +2,9 @@
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
 [![GitHub Release](https://img.shields.io/github/release/danyial/ha-smart-mailbox.svg)](https://github.com/danyial/ha-smart-mailbox/releases)
+[![Validate with hassfest](https://github.com/danyial/ha-smart-mailbox/actions/workflows/hassfest.yaml/badge.svg)](https://github.com/danyial/ha-smart-mailbox/actions/workflows/hassfest.yaml)
+[![HACS Validate](https://github.com/danyial/ha-smart-mailbox/actions/workflows/hacs.yaml/badge.svg)](https://github.com/danyial/ha-smart-mailbox/actions/workflows/hacs.yaml)
+
 
 Home Assistant integration for smart mailboxes with flap and door sensors.
 
