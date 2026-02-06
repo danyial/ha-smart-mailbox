@@ -5,8 +5,8 @@
         "title": "Smart Mailbox einrichten",
         "description": "Konfiguriere deine Briefkasten-Sensoren.",
         "data": {
-          "klappe_entity": "Klappen-Sensor (Einwurf)",
-          "tuer_entity": "Tür-Sensor (Entnahme)",
+          "flap_entity": "Klappen-Sensor (Einwurf)",
+          "door_entity": "Tür-Sensor (Entnahme)",
           "debounce_seconds": "Entprellzeit (Sekunden)",
           "notify": "Push-Benachrichtigungen aktivieren",
           "notify_service": "Benachrichtigungsdienst(e)"
@@ -25,11 +25,12 @@
       "init": {
         "title": "Smart Mailbox Optionen",
         "data": {
-          "klappe_entity": "Klappen-Sensor (Einwurf)",
-          "tuer_entity": "Tür-Sensor (Entnahme)",
+          "flap_entity": "Klappen-Sensor (Einwurf)",
+          "door_entity": "Tür-Sensor (Entnahme)",
           "debounce_seconds": "Entprellzeit (Sekunden)",
           "notify": "Push-Benachrichtigungen aktivieren",
           "notify_service": "Benachrichtigungsdienst(e)",
+          "notify_message": "Benachrichtigungstext",
           "enable_counter": "Einwurf-Zähler aktivieren",
           "enable_age": "Post-Alter-Sensor aktivieren",
           "age_unit": "Alter-Einheit",
@@ -37,6 +38,7 @@
         },
         "data_description": {
           "notify_service": "Kommagetrennte Liste für mehrere Dienste (z.B. notify.mobile_app_iphone, notify.telegram)",
+          "notify_message": "📬 Neue Post im Briefkasten!",
           "age_unit": "Post-Alter in Stunden oder Tagen anzeigen"
         }
       }
@@ -49,16 +51,16 @@
       }
     },
     "sensor": {
-      "letzter_einwurf": {
+      "last_delivery": {
         "name": "Letzter Einwurf"
       },
-      "letzte_leerung": {
+      "last_emptied": {
         "name": "Letzte Leerung"
       },
-      "einwurf_zaehler": {
+      "delivery_counter": {
         "name": "Einwurf-Zähler"
       },
-      "post_liegt_seit": {
+      "mail_age": {
         "name": "Post liegt seit"
       }
     },

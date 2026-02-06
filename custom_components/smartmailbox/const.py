@@ -4,15 +4,16 @@ DOMAIN = "smartmailbox"
 PLATFORMS = ["binary_sensor", "sensor", "button"]
 
 # Default source entities (can be changed via config/options flow)
-DEFAULT_KLAPPE_ENTITY = "binary_sensor.briefkasten_klappe_offnung"
-DEFAULT_TUER_ENTITY = "binary_sensor.briefkasten_tur_offnung"
+DEFAULT_FLAP_ENTITY = "binary_sensor.briefkasten_klappe_offnung"
+DEFAULT_DOOR_ENTITY = "binary_sensor.briefkasten_tur_offnung"
 
 # Config / options keys
-CONF_KLAPPE_ENTITY = "klappe_entity"
-CONF_TUER_ENTITY = "tuer_entity"
+CONF_FLAP_ENTITY = "flap_entity"
+CONF_DOOR_ENTITY = "door_entity"
 CONF_DEBOUNCE_SECONDS = "debounce_seconds"
 CONF_NOTIFY_ENABLED = "notify"
 CONF_NOTIFY_SERVICE = "notify_service"
+CONF_NOTIFY_MESSAGE = "notify_message"
 
 CONF_ENABLE_COUNTER = "enable_counter"
 CONF_ENABLE_AGE = "enable_age"
@@ -22,6 +23,7 @@ CONF_RESET_ON_EMPTY = "reset_on_empty"
 DEFAULT_DEBOUNCE_SECONDS = 3
 DEFAULT_NOTIFY_ENABLED = False
 DEFAULT_NOTIFY_SERVICE = "notify.notify"
+TRANSLATION_KEY_DEFAULT_NOTIFY = f"component.{DOMAIN}.options.step.init.data_description.{CONF_NOTIFY_MESSAGE}"
 DEFAULT_ENABLE_COUNTER = True
 DEFAULT_ENABLE_AGE = True
 DEFAULT_AGE_UNIT = "hours"

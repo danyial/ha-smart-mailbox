@@ -22,13 +22,13 @@ from .const import (
 _LOGGER = logging.getLogger(__name__)
 
 @dataclass
-class BriefkastenState:
+class MailboxState:
     post_present: bool = False
     last_delivery: datetime | None = None
     last_empty: datetime | None = None
     counter: int = 0
     notified_for_current_post: bool = False
-    last_klappe_trigger: datetime | None = None
+    last_flap_trigger: datetime | None = None
 
 def _dt_to_iso(dt: datetime | None) -> str | None:
     return dt.isoformat() if dt else None
@@ -45,19 +45,19 @@ def _iso_to_dt(value: str | None) -> datetime | None:
     except Exception:
         return None
 
-async def _load_state(hass: HomeAssistant, entry: ConfigEntry) -> BriefkastenState:
+async def _load_state(hass: HomeAssistant, entry: ConfigEntry) -> MailboxState:
     store = Store(hass, STORAGE_VERSION, f"{STORAGE_KEY_PREFIX}{entry.entry_id}")
     data = await store.async_load() or {}
-    return BriefkastenState(
+    return MailboxState(
         post_present=bool(data.get("post_present", False)),
         last_delivery=_iso_to_dt(data.get("last_delivery")),
         last_empty=_iso_to_dt(data.get("last_empty")),
         counter=int(data.get("counter", 0)),
         notified_for_current_post=bool(data.get("notified_for_current_post", False)),
-        last_klappe_trigger=_iso_to_dt(data.get("last_klappe_trigger")),
+        last_flap_trigger=_iso_to_dt(data.get("last_flap_trigger")),
     )
 
-async def _save_state(hass: HomeAssistant, entry: ConfigEntry, state: BriefkastenState) -> None:
+async def _save_state(hass: HomeAssistant, entry: ConfigEntry, state: MailboxState) -> None:
     store = Store(hass, STORAGE_VERSION, f"{STORAGE_KEY_PREFIX}{entry.entry_id}")
     await store.async_save({
         "post_present": state.post_present,
@@ -65,7 +65,7 @@ async def _save_state(hass: HomeAssistant, entry: ConfigEntry, state: Briefkaste
         "last_empty": _dt_to_iso(state.last_empty),
         "counter": state.counter,
         "notified_for_current_post": state.notified_for_current_post,
-        "last_klappe_trigger": _dt_to_iso(state.last_klappe_trigger),
+        "last_flap_trigger": _dt_to_iso(state.last_flap_trigger),
     })
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:

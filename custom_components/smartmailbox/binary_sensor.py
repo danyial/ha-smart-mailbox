@@ -12,21 +12,25 @@ from homeassistant.util import dt as dt_util
 
 _LOGGER = logging.getLogger(__name__)
 
+from homeassistant.helpers.translation import async_get_translations
+
 from .const import (
     DOMAIN,
-    CONF_KLAPPE_ENTITY,
-    CONF_TUER_ENTITY,
+    CONF_FLAP_ENTITY,
+    CONF_DOOR_ENTITY,
     CONF_DEBOUNCE_SECONDS,
     CONF_NOTIFY_ENABLED,
     CONF_NOTIFY_SERVICE,
+    CONF_NOTIFY_MESSAGE,
     CONF_RESET_ON_EMPTY,
+    TRANSLATION_KEY_DEFAULT_NOTIFY,
     SIGNAL_PREFIX,
 )
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities):
-    async_add_entities([BriefkastenPostSensor(hass, entry)])
+    async_add_entities([MailboxPostSensor(hass, entry)])
 
-class BriefkastenPostSensor(BinarySensorEntity):
+class MailboxPostSensor(BinarySensorEntity):
     _attr_name = "Post"
     _attr_icon = "mdi:mailbox-outline"
     _attr_device_class = "occupancy"
@@ -34,11 +38,11 @@ class BriefkastenPostSensor(BinarySensorEntity):
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry):
         self.hass = hass
         self.entry = entry
-        self._attr_unique_id = f"{entry.entry_id}_briefkasten_post"
+        self._attr_unique_id = f"{entry.entry_id}_mailbox_post"
 
         self._attr_device_info = {
             "identifiers": {(DOMAIN, entry.entry_id)},
-            "name": "Briefkasten",
+            "name": "Smart Mailbox",
             "manufacturer": "Danny Smolinsky",
             "model": "Smart Mailbox",
         }
@@ -48,16 +52,24 @@ class BriefkastenPostSensor(BinarySensorEntity):
 
         self._unsub = None
         self._unsub_dispatcher = None
+        self._default_notify_message = ""
 
     async def async_added_to_hass(self) -> None:
+        translations = await async_get_translations(
+            self.hass, self.hass.config.language, "options", {DOMAIN}
+        )
+        self._default_notify_message = translations.get(
+            TRANSLATION_KEY_DEFAULT_NOTIFY, ""
+        )
+
         self._unsub_dispatcher = async_dispatcher_connect(
             self.hass,
             f"{SIGNAL_PREFIX}{self.entry.entry_id}",
             self._handle_dispatcher_update,
         )
 
-        klappe = self.entry.options.get(CONF_KLAPPE_ENTITY, self.entry.data.get(CONF_KLAPPE_ENTITY))
-        tuer = self.entry.options.get(CONF_TUER_ENTITY, self.entry.data.get(CONF_TUER_ENTITY))
+        flap = self.entry.options.get(CONF_FLAP_ENTITY, self.entry.data.get(CONF_FLAP_ENTITY))
+        door = self.entry.options.get(CONF_DOOR_ENTITY, self.entry.data.get(CONF_DOOR_ENTITY))
 
         @callback
         def _changed(event):
@@ -70,12 +82,12 @@ class BriefkastenPostSensor(BinarySensorEntity):
             debounce_s = self.entry.options.get(CONF_DEBOUNCE_SECONDS, self.entry.data.get(CONF_DEBOUNCE_SECONDS, 3))
             debounce = timedelta(seconds=int(debounce_s))
 
-            # Klappe: Einwurf
-            if entity_id == klappe:
-                if self._state_ref.last_klappe_trigger and (now - self._state_ref.last_klappe_trigger) < debounce:
+            # Flap: delivery
+            if entity_id == flap:
+                if self._state_ref.last_flap_trigger and (now - self._state_ref.last_flap_trigger) < debounce:
                     return
 
-                self._state_ref.last_klappe_trigger = now
+                self._state_ref.last_flap_trigger = now
                 self._state_ref.last_delivery = now
                 self._state_ref.post_present = True
 
@@ -84,14 +96,18 @@ class BriefkastenPostSensor(BinarySensorEntity):
                     notify_enabled = self.entry.options.get(CONF_NOTIFY_ENABLED, self.entry.data.get(CONF_NOTIFY_ENABLED, False))
                     notify_services = self.entry.options.get(CONF_NOTIFY_SERVICE, self.entry.data.get(CONF_NOTIFY_SERVICE, "notify.notify"))
                     if notify_enabled and notify_services:
-                        self._send_notifications(notify_services)
+                        message = self.entry.options.get(
+                            CONF_NOTIFY_MESSAGE,
+                            self.entry.data.get(CONF_NOTIFY_MESSAGE, self._default_notify_message),
+                        )
+                        self._send_notifications(notify_services, message)
                     self._state_ref.notified_for_current_post = True
 
-                # Counter increments on every accepted klappe event
+                # Counter increments on every accepted flap event
                 self._state_ref.counter += 1
 
-            # Tür: Leerung
-            elif entity_id == tuer:
+            # Door: emptying
+            elif entity_id == door:
                 self._state_ref.last_empty = now
                 self._state_ref.post_present = False
                 self._state_ref.notified_for_current_post = False
@@ -106,7 +122,7 @@ class BriefkastenPostSensor(BinarySensorEntity):
             async_dispatcher_send(self.hass, f"{SIGNAL_PREFIX}{self.entry.entry_id}")
             self.schedule_update_ha_state()
 
-        self._unsub = async_track_state_change_event(self.hass, [klappe, tuer], _changed)
+        self._unsub = async_track_state_change_event(self.hass, [flap, door], _changed)
 
     async def async_will_remove_from_hass(self) -> None:
         if self._unsub:
@@ -121,7 +137,7 @@ class BriefkastenPostSensor(BinarySensorEntity):
         self.schedule_update_ha_state()
 
     @callback
-    def _send_notifications(self, notify_services: str) -> None:
+    def _send_notifications(self, notify_services: str, message: str) -> None:
         """Send notifications to configured services."""
         for notify_service in [s.strip() for s in notify_services.split(",") if s.strip()]:
             try:
@@ -133,7 +149,7 @@ class BriefkastenPostSensor(BinarySensorEntity):
                 self.hass.async_create_task(
                     self.hass.services.async_call(
                         domain, service,
-                        {"message": "📬 Neue Post im Briefkasten!"},
+                        {"message": message},
                         blocking=False,
                     )
                 )

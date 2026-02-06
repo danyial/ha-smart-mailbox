@@ -19,7 +19,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
     ])
 
 
-class _BriefkastenButtonBase(ButtonEntity):
+class _MailboxButtonBase(ButtonEntity):
     """Base class for mailbox buttons."""
 
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry, state_ref, save_fn):
@@ -30,7 +30,7 @@ class _BriefkastenButtonBase(ButtonEntity):
 
         self._attr_device_info = {
             "identifiers": {(DOMAIN, entry.entry_id)},
-            "name": "Briefkasten",
+            "name": "Smart Mailbox",
             "manufacturer": "Danny Smolinsky",
             "model": "Smart Mailbox",
         }
@@ -41,10 +41,10 @@ class _BriefkastenButtonBase(ButtonEntity):
         async_dispatcher_send(self.hass, f"{SIGNAL_PREFIX}{self.entry.entry_id}")
 
 
-class ResetCounterButton(_BriefkastenButtonBase):
+class ResetCounterButton(_MailboxButtonBase):
     """Button to reset the delivery counter."""
 
-    _attr_name = "Zähler zurücksetzen"
+    _attr_name = "Reset Counter"
     _attr_icon = "mdi:counter"
 
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry, state_ref, save_fn):
@@ -57,10 +57,10 @@ class ResetCounterButton(_BriefkastenButtonBase):
         self._notify_update()
 
 
-class MarkEmptyButton(_BriefkastenButtonBase):
+class MarkEmptyButton(_MailboxButtonBase):
     """Button to mark mailbox as empty."""
 
-    _attr_name = "Als geleert markieren"
+    _attr_name = "Mark as Emptied"
     _attr_icon = "mdi:mailbox-open-outline"
 
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry, state_ref, save_fn):
