@@ -44,6 +44,7 @@ class _MailboxButtonBase(ButtonEntity):
 class ResetCounterButton(_MailboxButtonBase):
     """Button to reset the delivery counter."""
 
+    _attr_has_entity_name = True
     _attr_translation_key = "reset_counter"
     _attr_icon = "mdi:counter"
 
@@ -60,6 +61,7 @@ class ResetCounterButton(_MailboxButtonBase):
 class MarkEmptyButton(_MailboxButtonBase):
     """Button to mark mailbox as empty."""
 
+    _attr_has_entity_name = True
     _attr_translation_key = "mark_empty"
     _attr_icon = "mdi:mailbox-open-outline"
 

@@ -65,6 +65,7 @@ class _MailboxBaseSensor(SensorEntity):
         self.schedule_update_ha_state()
 
 class LastDeliverySensor(_MailboxBaseSensor):
+    _attr_has_entity_name = True
     _attr_translation_key = "last_delivery"
     _attr_icon = "mdi:clock-outline"
     _attr_device_class = "timestamp"
@@ -74,6 +75,7 @@ class LastDeliverySensor(_MailboxBaseSensor):
         return self._state_ref.last_delivery
 
 class LastEmptiedSensor(_MailboxBaseSensor):
+    _attr_has_entity_name = True
     _attr_translation_key = "last_emptied"
     _attr_icon = "mdi:clock-outline"
     _attr_device_class = "timestamp"
@@ -83,6 +85,7 @@ class LastEmptiedSensor(_MailboxBaseSensor):
         return self._state_ref.last_empty
 
 class DeliveryCounterSensor(_MailboxBaseSensor):
+    _attr_has_entity_name = True
     _attr_translation_key = "delivery_counter"
     _attr_icon = "mdi:counter"
 
@@ -91,6 +94,7 @@ class DeliveryCounterSensor(_MailboxBaseSensor):
         return int(self._state_ref.counter)
 
 class MailAgeSensor(_MailboxBaseSensor):
+    _attr_has_entity_name = True
     _attr_translation_key = "mail_age"
     _attr_icon = "mdi:clock-outline"
 
