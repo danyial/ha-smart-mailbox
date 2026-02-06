@@ -65,7 +65,7 @@ class _MailboxBaseSensor(SensorEntity):
         self.schedule_update_ha_state()
 
 class LastDeliverySensor(_MailboxBaseSensor):
-    _attr_name = "Last Delivery"
+    _attr_translation_key = "last_delivery"
     _attr_icon = "mdi:clock-outline"
     _attr_device_class = "timestamp"
 
@@ -74,7 +74,7 @@ class LastDeliverySensor(_MailboxBaseSensor):
         return self._state_ref.last_delivery
 
 class LastEmptiedSensor(_MailboxBaseSensor):
-    _attr_name = "Last Emptied"
+    _attr_translation_key = "last_emptied"
     _attr_icon = "mdi:clock-outline"
     _attr_device_class = "timestamp"
 
@@ -83,7 +83,7 @@ class LastEmptiedSensor(_MailboxBaseSensor):
         return self._state_ref.last_empty
 
 class DeliveryCounterSensor(_MailboxBaseSensor):
-    _attr_name = "Delivery Counter"
+    _attr_translation_key = "delivery_counter"
     _attr_icon = "mdi:counter"
 
     @property
@@ -91,7 +91,7 @@ class DeliveryCounterSensor(_MailboxBaseSensor):
         return int(self._state_ref.counter)
 
 class MailAgeSensor(_MailboxBaseSensor):
-    _attr_name = "Mail Age"
+    _attr_translation_key = "mail_age"
     _attr_icon = "mdi:clock-outline"
 
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry, state_ref, unique_id: str):

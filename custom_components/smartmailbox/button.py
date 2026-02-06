@@ -44,7 +44,7 @@ class _MailboxButtonBase(ButtonEntity):
 class ResetCounterButton(_MailboxButtonBase):
     """Button to reset the delivery counter."""
 
-    _attr_name = "Reset Counter"
+    _attr_translation_key = "reset_counter"
     _attr_icon = "mdi:counter"
 
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry, state_ref, save_fn):
@@ -60,7 +60,7 @@ class ResetCounterButton(_MailboxButtonBase):
 class MarkEmptyButton(_MailboxButtonBase):
     """Button to mark mailbox as empty."""
 
-    _attr_name = "Mark as Emptied"
+    _attr_translation_key = "mark_empty"
     _attr_icon = "mdi:mailbox-open-outline"
 
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry, state_ref, save_fn):

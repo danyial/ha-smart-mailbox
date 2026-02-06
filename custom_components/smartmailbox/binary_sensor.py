@@ -31,7 +31,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
     async_add_entities([MailboxPostSensor(hass, entry)])
 
 class MailboxPostSensor(BinarySensorEntity):
-    _attr_name = "Post"
+    _attr_translation_key = "post"
     _attr_icon = "mdi:mailbox-outline"
     _attr_device_class = "occupancy"
 
