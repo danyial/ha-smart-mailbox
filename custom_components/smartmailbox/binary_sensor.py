@@ -76,7 +76,11 @@ class MailboxPostSensor(BinarySensorEntity):
         def _changed(event):
             entity_id = event.data.get("entity_id")
             new_state = event.data.get("new_state")
+            old_state = event.data.get("old_state")
             if new_state is None or new_state.state != "on":
+                return
+            # Ignore state transitions during startup (unavailable/unknown → on)
+            if old_state is None or old_state.state in ("unavailable", "unknown"):
                 return
 
             now = dt_util.utcnow()
