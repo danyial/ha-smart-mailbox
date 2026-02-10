@@ -22,9 +22,7 @@ from .const import (
     CONF_RESET_ON_EMPTY,
     DEFAULT_DEBOUNCE_SECONDS,
     DEFAULT_NOTIFY_ENABLED,
-    DEFAULT_NOTIFY_SERVICE,
     DEFAULT_DOOR_NOTIFY_ENABLED,
-    DEFAULT_DOOR_NOTIFY_SERVICE,
     TRANSLATION_KEY_DEFAULT_NOTIFY,
     TRANSLATION_KEY_DEFAULT_DOOR_NOTIFY,
     DEFAULT_ENABLE_COUNTER,
@@ -34,13 +32,14 @@ from .const import (
 )
 
 _ENTITY_SELECTOR = EntitySelector(EntitySelectorConfig(domain="binary_sensor"))
+_NOTIFY_SELECTOR = EntitySelector(EntitySelectorConfig(domain="notify", multiple=True))
 
 USER_SCHEMA = vol.Schema({
     vol.Required(CONF_FLAP_ENTITY): _ENTITY_SELECTOR,
     vol.Required(CONF_DOOR_ENTITY): _ENTITY_SELECTOR,
     vol.Required(CONF_DEBOUNCE_SECONDS, default=DEFAULT_DEBOUNCE_SECONDS): vol.Coerce(int),
     vol.Required(CONF_NOTIFY_ENABLED, default=DEFAULT_NOTIFY_ENABLED): bool,
-    vol.Required(CONF_NOTIFY_SERVICE, default=DEFAULT_NOTIFY_SERVICE): str,
+    vol.Required(CONF_NOTIFY_SERVICE, default=[]): _NOTIFY_SELECTOR,
 })
 
 def _options_schema(options: dict) -> vol.Schema:
@@ -51,10 +50,10 @@ def _options_schema(options: dict) -> vol.Schema:
         vol.Optional(CONF_RESET_ON_EMPTY, default=options.get(CONF_RESET_ON_EMPTY, DEFAULT_RESET_ON_EMPTY)): bool,
         vol.Optional(CONF_DEBOUNCE_SECONDS, default=options.get(CONF_DEBOUNCE_SECONDS, DEFAULT_DEBOUNCE_SECONDS)): vol.Coerce(int),
         vol.Optional(CONF_NOTIFY_ENABLED, default=options.get(CONF_NOTIFY_ENABLED, DEFAULT_NOTIFY_ENABLED)): bool,
-        vol.Optional(CONF_NOTIFY_SERVICE, default=options.get(CONF_NOTIFY_SERVICE, DEFAULT_NOTIFY_SERVICE)): str,
+        vol.Optional(CONF_NOTIFY_SERVICE, default=options.get(CONF_NOTIFY_SERVICE, [])): _NOTIFY_SELECTOR,
         vol.Optional(CONF_NOTIFY_MESSAGE, default=options.get(CONF_NOTIFY_MESSAGE, "")): str,
         vol.Optional(CONF_DOOR_NOTIFY_ENABLED, default=options.get(CONF_DOOR_NOTIFY_ENABLED, DEFAULT_DOOR_NOTIFY_ENABLED)): bool,
-        vol.Optional(CONF_DOOR_NOTIFY_SERVICE, default=options.get(CONF_DOOR_NOTIFY_SERVICE, DEFAULT_DOOR_NOTIFY_SERVICE)): str,
+        vol.Optional(CONF_DOOR_NOTIFY_SERVICE, default=options.get(CONF_DOOR_NOTIFY_SERVICE, [])): _NOTIFY_SELECTOR,
         vol.Optional(CONF_DOOR_NOTIFY_MESSAGE, default=options.get(CONF_DOOR_NOTIFY_MESSAGE, "")): str,
         vol.Optional(CONF_FLAP_ENTITY, default=options.get(CONF_FLAP_ENTITY, "")): _ENTITY_SELECTOR,
         vol.Optional(CONF_DOOR_ENTITY, default=options.get(CONF_DOOR_ENTITY, "")): _ENTITY_SELECTOR,
