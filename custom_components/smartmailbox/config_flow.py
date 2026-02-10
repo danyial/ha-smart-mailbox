@@ -1,7 +1,13 @@
 from __future__ import annotations
 
 from homeassistant import config_entries
-from homeassistant.helpers.selector import EntitySelector, EntitySelectorConfig
+from homeassistant.helpers.selector import (
+    EntitySelector,
+    EntitySelectorConfig,
+    SelectSelector,
+    SelectSelectorConfig,
+    SelectSelectorMode,
+)
 from homeassistant.helpers.translation import async_get_translations
 import voluptuous as vol
 
@@ -32,17 +38,33 @@ from .const import (
 )
 
 _ENTITY_SELECTOR = EntitySelector(EntitySelectorConfig(domain="binary_sensor"))
-_NOTIFY_SELECTOR = EntitySelector(EntitySelectorConfig(domain="notify", multiple=True))
 
-USER_SCHEMA = vol.Schema({
-    vol.Required(CONF_FLAP_ENTITY): _ENTITY_SELECTOR,
-    vol.Required(CONF_DOOR_ENTITY): _ENTITY_SELECTOR,
-    vol.Required(CONF_DEBOUNCE_SECONDS, default=DEFAULT_DEBOUNCE_SECONDS): vol.Coerce(int),
-    vol.Required(CONF_NOTIFY_ENABLED, default=DEFAULT_NOTIFY_ENABLED): bool,
-    vol.Required(CONF_NOTIFY_SERVICE, default=[]): _NOTIFY_SELECTOR,
-})
 
-def _options_schema(options: dict) -> vol.Schema:
+def _notify_selector(hass) -> SelectSelector:
+    """Build a multi-select dropdown from registered notify services."""
+    services = hass.services.async_services().get("notify", {})
+    options = [
+        {"value": f"notify.{name}", "label": f"notify.{name}"}
+        for name in sorted(services)
+        if name != "persistent_notification"
+    ]
+    return SelectSelector(
+        SelectSelectorConfig(options=options, multiple=True, mode=SelectSelectorMode.DROPDOWN)
+    )
+
+
+def _user_schema(hass) -> vol.Schema:
+    return vol.Schema({
+        vol.Required(CONF_FLAP_ENTITY): _ENTITY_SELECTOR,
+        vol.Required(CONF_DOOR_ENTITY): _ENTITY_SELECTOR,
+        vol.Required(CONF_DEBOUNCE_SECONDS, default=DEFAULT_DEBOUNCE_SECONDS): vol.Coerce(int),
+        vol.Required(CONF_NOTIFY_ENABLED, default=DEFAULT_NOTIFY_ENABLED): bool,
+        vol.Required(CONF_NOTIFY_SERVICE, default=[]): _notify_selector(hass),
+    })
+
+
+def _options_schema(options: dict, hass) -> vol.Schema:
+    notify_sel = _notify_selector(hass)
     return vol.Schema({
         vol.Optional(CONF_ENABLE_COUNTER, default=options.get(CONF_ENABLE_COUNTER, DEFAULT_ENABLE_COUNTER)): bool,
         vol.Optional(CONF_ENABLE_AGE, default=options.get(CONF_ENABLE_AGE, DEFAULT_ENABLE_AGE)): bool,
@@ -50,10 +72,10 @@ def _options_schema(options: dict) -> vol.Schema:
         vol.Optional(CONF_RESET_ON_EMPTY, default=options.get(CONF_RESET_ON_EMPTY, DEFAULT_RESET_ON_EMPTY)): bool,
         vol.Optional(CONF_DEBOUNCE_SECONDS, default=options.get(CONF_DEBOUNCE_SECONDS, DEFAULT_DEBOUNCE_SECONDS)): vol.Coerce(int),
         vol.Optional(CONF_NOTIFY_ENABLED, default=options.get(CONF_NOTIFY_ENABLED, DEFAULT_NOTIFY_ENABLED)): bool,
-        vol.Optional(CONF_NOTIFY_SERVICE, default=options.get(CONF_NOTIFY_SERVICE, [])): _NOTIFY_SELECTOR,
+        vol.Optional(CONF_NOTIFY_SERVICE, default=options.get(CONF_NOTIFY_SERVICE, [])): notify_sel,
         vol.Optional(CONF_NOTIFY_MESSAGE, default=options.get(CONF_NOTIFY_MESSAGE, "")): str,
         vol.Optional(CONF_DOOR_NOTIFY_ENABLED, default=options.get(CONF_DOOR_NOTIFY_ENABLED, DEFAULT_DOOR_NOTIFY_ENABLED)): bool,
-        vol.Optional(CONF_DOOR_NOTIFY_SERVICE, default=options.get(CONF_DOOR_NOTIFY_SERVICE, [])): _NOTIFY_SELECTOR,
+        vol.Optional(CONF_DOOR_NOTIFY_SERVICE, default=options.get(CONF_DOOR_NOTIFY_SERVICE, [])): notify_sel,
         vol.Optional(CONF_DOOR_NOTIFY_MESSAGE, default=options.get(CONF_DOOR_NOTIFY_MESSAGE, "")): str,
         vol.Optional(CONF_FLAP_ENTITY, default=options.get(CONF_FLAP_ENTITY, "")): _ENTITY_SELECTOR,
         vol.Optional(CONF_DOOR_ENTITY, default=options.get(CONF_DOOR_ENTITY, "")): _ENTITY_SELECTOR,
@@ -69,7 +91,7 @@ class MailboxConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             self._abort_if_unique_id_configured()
             return self.async_create_entry(title="Smart Mailbox", data=user_input)
 
-        return self.async_show_form(step_id="user", data_schema=USER_SCHEMA)
+        return self.async_show_form(step_id="user", data_schema=_user_schema(self.hass))
 
     @staticmethod
     def async_get_options_flow(config_entry):
@@ -92,4 +114,4 @@ class MailboxOptionsFlow(config_entries.OptionsFlow):
                 merged[CONF_NOTIFY_MESSAGE] = translations.get(TRANSLATION_KEY_DEFAULT_NOTIFY, "")
             if not merged.get(CONF_DOOR_NOTIFY_MESSAGE):
                 merged[CONF_DOOR_NOTIFY_MESSAGE] = translations.get(TRANSLATION_KEY_DEFAULT_DOOR_NOTIFY, "")
-        return self.async_show_form(step_id="init", data_schema=_options_schema(merged))
+        return self.async_show_form(step_id="init", data_schema=_options_schema(merged, self.hass))
