@@ -31,6 +31,9 @@
           "notify": "Enable push notifications",
           "notify_service": "Notification service(s)",
           "notify_message": "Notification message",
+          "door_notify": "Enable collection notifications",
+          "door_notify_service": "Collection notification service(s)",
+          "door_notify_message": "Collection notification message",
           "enable_counter": "Enable delivery counter",
           "enable_age": "Enable mail age sensor",
           "age_unit": "Age unit",
@@ -39,6 +42,8 @@
         "data_description": {
           "notify_service": "Comma-separated list for multiple services (e.g. notify.mobile_app_iphone, notify.telegram)",
           "notify_message": "📬 New mail in the mailbox!",
+          "door_notify_service": "Comma-separated list for multiple services (e.g. notify.mobile_app_iphone, notify.telegram)",
+          "door_notify_message": "📭 Mail has been collected!",
           "age_unit": "Display mail age in hours or days"
         }
       }

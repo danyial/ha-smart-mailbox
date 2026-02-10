@@ -14,6 +14,9 @@ from .const import (
     CONF_NOTIFY_ENABLED,
     CONF_NOTIFY_SERVICE,
     CONF_NOTIFY_MESSAGE,
+    CONF_DOOR_NOTIFY_ENABLED,
+    CONF_DOOR_NOTIFY_SERVICE,
+    CONF_DOOR_NOTIFY_MESSAGE,
     CONF_ENABLE_COUNTER,
     CONF_ENABLE_AGE,
     CONF_AGE_UNIT,
@@ -21,7 +24,10 @@ from .const import (
     DEFAULT_DEBOUNCE_SECONDS,
     DEFAULT_NOTIFY_ENABLED,
     DEFAULT_NOTIFY_SERVICE,
+    DEFAULT_DOOR_NOTIFY_ENABLED,
+    DEFAULT_DOOR_NOTIFY_SERVICE,
     TRANSLATION_KEY_DEFAULT_NOTIFY,
+    TRANSLATION_KEY_DEFAULT_DOOR_NOTIFY,
     DEFAULT_ENABLE_COUNTER,
     DEFAULT_ENABLE_AGE,
     DEFAULT_AGE_UNIT,
@@ -46,6 +52,9 @@ def _options_schema(options: dict) -> vol.Schema:
         vol.Optional(CONF_NOTIFY_ENABLED, default=options.get(CONF_NOTIFY_ENABLED, DEFAULT_NOTIFY_ENABLED)): bool,
         vol.Optional(CONF_NOTIFY_SERVICE, default=options.get(CONF_NOTIFY_SERVICE, DEFAULT_NOTIFY_SERVICE)): str,
         vol.Optional(CONF_NOTIFY_MESSAGE, default=options.get(CONF_NOTIFY_MESSAGE, "")): str,
+        vol.Optional(CONF_DOOR_NOTIFY_ENABLED, default=options.get(CONF_DOOR_NOTIFY_ENABLED, DEFAULT_DOOR_NOTIFY_ENABLED)): bool,
+        vol.Optional(CONF_DOOR_NOTIFY_SERVICE, default=options.get(CONF_DOOR_NOTIFY_SERVICE, DEFAULT_DOOR_NOTIFY_SERVICE)): str,
+        vol.Optional(CONF_DOOR_NOTIFY_MESSAGE, default=options.get(CONF_DOOR_NOTIFY_MESSAGE, "")): str,
         vol.Optional(CONF_FLAP_ENTITY, default=options.get(CONF_FLAP_ENTITY, DEFAULT_FLAP_ENTITY)): str,
         vol.Optional(CONF_DOOR_ENTITY, default=options.get(CONF_DOOR_ENTITY, DEFAULT_DOOR_ENTITY)): str,
     })
@@ -75,9 +84,12 @@ class MailboxOptionsFlow(config_entries.OptionsFlow):
             return self.async_create_entry(title="", data=user_input)
 
         merged = {**self.entry.data, **self.entry.options}
-        if not merged.get(CONF_NOTIFY_MESSAGE):
+        if not merged.get(CONF_NOTIFY_MESSAGE) or not merged.get(CONF_DOOR_NOTIFY_MESSAGE):
             translations = await async_get_translations(
                 self.hass, self.hass.config.language, "options", {DOMAIN}
             )
-            merged[CONF_NOTIFY_MESSAGE] = translations.get(TRANSLATION_KEY_DEFAULT_NOTIFY, "")
+            if not merged.get(CONF_NOTIFY_MESSAGE):
+                merged[CONF_NOTIFY_MESSAGE] = translations.get(TRANSLATION_KEY_DEFAULT_NOTIFY, "")
+            if not merged.get(CONF_DOOR_NOTIFY_MESSAGE):
+                merged[CONF_DOOR_NOTIFY_MESSAGE] = translations.get(TRANSLATION_KEY_DEFAULT_DOOR_NOTIFY, "")
         return self.async_show_form(step_id="init", data_schema=_options_schema(merged))

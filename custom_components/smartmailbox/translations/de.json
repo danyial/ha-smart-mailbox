@@ -31,6 +31,9 @@
           "notify": "Push-Benachrichtigungen aktivieren",
           "notify_service": "Benachrichtigungsdienst(e)",
           "notify_message": "Benachrichtigungstext",
+          "door_notify": "Entnahme-Benachrichtigungen aktivieren",
+          "door_notify_service": "Entnahme-Benachrichtigungsdienst(e)",
+          "door_notify_message": "Entnahme-Benachrichtigungstext",
           "enable_counter": "Einwurf-Zähler aktivieren",
           "enable_age": "Post-Alter-Sensor aktivieren",
           "age_unit": "Alter-Einheit",
@@ -39,6 +42,8 @@
         "data_description": {
           "notify_service": "Kommagetrennte Liste für mehrere Dienste (z.B. notify.mobile_app_iphone, notify.telegram)",
           "notify_message": "📬 Neue Post im Briefkasten!",
+          "door_notify_service": "Kommagetrennte Liste für mehrere Dienste (z.B. notify.mobile_app_iphone, notify.telegram)",
+          "door_notify_message": "📭 Post wurde entnommen!",
           "age_unit": "Post-Alter in Stunden oder Tagen anzeigen"
         }
       }

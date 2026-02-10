@@ -22,8 +22,12 @@ from .const import (
     CONF_NOTIFY_ENABLED,
     CONF_NOTIFY_SERVICE,
     CONF_NOTIFY_MESSAGE,
+    CONF_DOOR_NOTIFY_ENABLED,
+    CONF_DOOR_NOTIFY_SERVICE,
+    CONF_DOOR_NOTIFY_MESSAGE,
     CONF_RESET_ON_EMPTY,
     TRANSLATION_KEY_DEFAULT_NOTIFY,
+    TRANSLATION_KEY_DEFAULT_DOOR_NOTIFY,
     SIGNAL_PREFIX,
 )
 
@@ -54,6 +58,7 @@ class MailboxPostSensor(BinarySensorEntity):
         self._unsub = None
         self._unsub_dispatcher = None
         self._default_notify_message = ""
+        self._default_door_notify_message = ""
 
     async def async_added_to_hass(self) -> None:
         translations = await async_get_translations(
@@ -61,6 +66,9 @@ class MailboxPostSensor(BinarySensorEntity):
         )
         self._default_notify_message = translations.get(
             TRANSLATION_KEY_DEFAULT_NOTIFY, ""
+        )
+        self._default_door_notify_message = translations.get(
+            TRANSLATION_KEY_DEFAULT_DOOR_NOTIFY, ""
         )
 
         self._unsub_dispatcher = async_dispatcher_connect(
@@ -119,6 +127,15 @@ class MailboxPostSensor(BinarySensorEntity):
 
                 if self.entry.options.get(CONF_RESET_ON_EMPTY, self.entry.data.get(CONF_RESET_ON_EMPTY, False)):
                     self._state_ref.counter = 0
+
+                door_notify_enabled = self.entry.options.get(CONF_DOOR_NOTIFY_ENABLED, self.entry.data.get(CONF_DOOR_NOTIFY_ENABLED, False))
+                door_notify_services = self.entry.options.get(CONF_DOOR_NOTIFY_SERVICE, self.entry.data.get(CONF_DOOR_NOTIFY_SERVICE, "notify.notify"))
+                if door_notify_enabled and door_notify_services:
+                    door_message = self.entry.options.get(
+                        CONF_DOOR_NOTIFY_MESSAGE,
+                        self.entry.data.get(CONF_DOOR_NOTIFY_MESSAGE, self._default_door_notify_message),
+                    )
+                    self._send_notifications(door_notify_services, door_message)
 
             else:
                 return
