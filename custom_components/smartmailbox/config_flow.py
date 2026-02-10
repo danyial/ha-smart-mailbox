@@ -1,13 +1,12 @@
 from __future__ import annotations
 
 from homeassistant import config_entries
+from homeassistant.helpers.selector import EntitySelector, EntitySelectorConfig
 from homeassistant.helpers.translation import async_get_translations
 import voluptuous as vol
 
 from .const import (
     DOMAIN,
-    DEFAULT_FLAP_ENTITY,
-    DEFAULT_DOOR_ENTITY,
     CONF_FLAP_ENTITY,
     CONF_DOOR_ENTITY,
     CONF_DEBOUNCE_SECONDS,
@@ -34,9 +33,11 @@ from .const import (
     DEFAULT_RESET_ON_EMPTY,
 )
 
+_ENTITY_SELECTOR = EntitySelector(EntitySelectorConfig(domain="binary_sensor"))
+
 USER_SCHEMA = vol.Schema({
-    vol.Required(CONF_FLAP_ENTITY, default=DEFAULT_FLAP_ENTITY): str,
-    vol.Required(CONF_DOOR_ENTITY, default=DEFAULT_DOOR_ENTITY): str,
+    vol.Required(CONF_FLAP_ENTITY): _ENTITY_SELECTOR,
+    vol.Required(CONF_DOOR_ENTITY): _ENTITY_SELECTOR,
     vol.Required(CONF_DEBOUNCE_SECONDS, default=DEFAULT_DEBOUNCE_SECONDS): vol.Coerce(int),
     vol.Required(CONF_NOTIFY_ENABLED, default=DEFAULT_NOTIFY_ENABLED): bool,
     vol.Required(CONF_NOTIFY_SERVICE, default=DEFAULT_NOTIFY_SERVICE): str,
@@ -55,8 +56,8 @@ def _options_schema(options: dict) -> vol.Schema:
         vol.Optional(CONF_DOOR_NOTIFY_ENABLED, default=options.get(CONF_DOOR_NOTIFY_ENABLED, DEFAULT_DOOR_NOTIFY_ENABLED)): bool,
         vol.Optional(CONF_DOOR_NOTIFY_SERVICE, default=options.get(CONF_DOOR_NOTIFY_SERVICE, DEFAULT_DOOR_NOTIFY_SERVICE)): str,
         vol.Optional(CONF_DOOR_NOTIFY_MESSAGE, default=options.get(CONF_DOOR_NOTIFY_MESSAGE, "")): str,
-        vol.Optional(CONF_FLAP_ENTITY, default=options.get(CONF_FLAP_ENTITY, DEFAULT_FLAP_ENTITY)): str,
-        vol.Optional(CONF_DOOR_ENTITY, default=options.get(CONF_DOOR_ENTITY, DEFAULT_DOOR_ENTITY)): str,
+        vol.Optional(CONF_FLAP_ENTITY, default=options.get(CONF_FLAP_ENTITY, "")): _ENTITY_SELECTOR,
+        vol.Optional(CONF_DOOR_ENTITY, default=options.get(CONF_DOOR_ENTITY, "")): _ENTITY_SELECTOR,
     })
 
 class MailboxConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
