@@ -107,7 +107,7 @@ class MailboxPostSensor(BinarySensorEntity):
                 # Push only once per "post_present period"
                 if not self._state_ref.notified_for_current_post:
                     notify_enabled = self.entry.options.get(CONF_NOTIFY_ENABLED, self.entry.data.get(CONF_NOTIFY_ENABLED, False))
-                    notify_services = self.entry.options.get(CONF_NOTIFY_SERVICE, self.entry.data.get(CONF_NOTIFY_SERVICE, "notify.notify"))
+                    notify_services = self.entry.options.get(CONF_NOTIFY_SERVICE, self.entry.data.get(CONF_NOTIFY_SERVICE, []))
                     if notify_enabled and notify_services:
                         message = self.entry.options.get(
                             CONF_NOTIFY_MESSAGE,
@@ -129,7 +129,7 @@ class MailboxPostSensor(BinarySensorEntity):
                     self._state_ref.counter = 0
 
                 door_notify_enabled = self.entry.options.get(CONF_DOOR_NOTIFY_ENABLED, self.entry.data.get(CONF_DOOR_NOTIFY_ENABLED, False))
-                door_notify_services = self.entry.options.get(CONF_DOOR_NOTIFY_SERVICE, self.entry.data.get(CONF_DOOR_NOTIFY_SERVICE, "notify.notify"))
+                door_notify_services = self.entry.options.get(CONF_DOOR_NOTIFY_SERVICE, self.entry.data.get(CONF_DOOR_NOTIFY_SERVICE, []))
                 if door_notify_enabled and door_notify_services:
                     door_message = self.entry.options.get(
                         CONF_DOOR_NOTIFY_MESSAGE,
@@ -159,9 +159,15 @@ class MailboxPostSensor(BinarySensorEntity):
         self.schedule_update_ha_state()
 
     @callback
-    def _send_notifications(self, notify_services: str, message: str) -> None:
+    def _send_notifications(self, notify_services: list | str, message: str) -> None:
         """Send notifications to configured services."""
-        for notify_service in [s.strip() for s in notify_services.split(",") if s.strip()]:
+        # Support both list (EntitySelector) and comma-separated string (legacy)
+        if isinstance(notify_services, str):
+            services = [s.strip() for s in notify_services.split(",") if s.strip()]
+        else:
+            services = notify_services
+
+        for notify_service in services:
             try:
                 if "." in notify_service:
                     domain, service = notify_service.split(".", 1)

@@ -12,7 +12,6 @@
           "notify_service": "Notification service(s)"
         },
         "data_description": {
-          "notify_service": "Comma-separated list for multiple services (e.g. notify.mobile_app_iphone, notify.telegram)"
         }
       }
     },
@@ -40,9 +39,7 @@
           "reset_on_empty": "Reset counter when emptied"
         },
         "data_description": {
-          "notify_service": "Comma-separated list for multiple services (e.g. notify.mobile_app_iphone, notify.telegram)",
           "notify_message": "📬 New mail in the mailbox!",
-          "door_notify_service": "Comma-separated list for multiple services (e.g. notify.mobile_app_iphone, notify.telegram)",
           "door_notify_message": "📭 Mail has been collected!",
           "age_unit": "Display mail age in hours or days"
         }
