@@ -13,6 +13,7 @@ import voluptuous as vol
 
 from .const import (
     DOMAIN,
+    CONF_NAME,
     CONF_FLAP_ENTITY,
     CONF_DOOR_ENTITY,
     CONF_DEBOUNCE_SECONDS,
@@ -55,6 +56,7 @@ def _notify_selector(hass) -> SelectSelector:
 
 def _user_schema(hass) -> vol.Schema:
     return vol.Schema({
+        vol.Required(CONF_NAME, default="Smart Mailbox"): str,
         vol.Required(CONF_FLAP_ENTITY): _ENTITY_SELECTOR,
         vol.Required(CONF_DOOR_ENTITY): _ENTITY_SELECTOR,
         vol.Required(CONF_DEBOUNCE_SECONDS, default=DEFAULT_DEBOUNCE_SECONDS): vol.Coerce(int),
@@ -86,10 +88,11 @@ class MailboxConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_user(self, user_input=None):
         if user_input is not None:
-            # prevent multiple instances
-            await self.async_set_unique_id(DOMAIN)
+            # Unique per sensor pair — prevents duplicate entries for the same mailbox
+            unique = f"{user_input[CONF_FLAP_ENTITY]}_{user_input[CONF_DOOR_ENTITY]}"
+            await self.async_set_unique_id(unique)
             self._abort_if_unique_id_configured()
-            return self.async_create_entry(title="Smart Mailbox", data=user_input)
+            return self.async_create_entry(title=user_input[CONF_NAME], data=user_input)
 
         return self.async_show_form(step_id="user", data_schema=_user_schema(self.hass))
 

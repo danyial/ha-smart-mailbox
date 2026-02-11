@@ -4,6 +4,7 @@ DOMAIN = "smartmailbox"
 PLATFORMS = ["binary_sensor", "sensor", "button"]
 
 # Config / options keys
+CONF_NAME = "name"
 CONF_FLAP_ENTITY = "flap_entity"
 CONF_DOOR_ENTITY = "door_entity"
 CONF_DEBOUNCE_SECONDS = "debounce_seconds"

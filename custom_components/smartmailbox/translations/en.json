@@ -5,6 +5,7 @@
         "title": "Smart Mailbox Setup",
         "description": "Configure your smart mailbox sensors.",
         "data": {
+          "name": "Mailbox name",
           "flap_entity": "Flap sensor (mail slot)",
           "door_entity": "Door sensor (retrieval door)",
           "debounce_seconds": "Debounce time (seconds)",
@@ -16,7 +17,7 @@
       }
     },
     "abort": {
-      "already_configured": "Smart Mailbox is already configured."
+      "already_configured": "A mailbox with these sensors is already configured."
     }
   },
   "options": {
