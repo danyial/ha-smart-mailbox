@@ -16,6 +16,7 @@ from homeassistant.helpers.translation import async_get_translations
 
 from .const import (
     DOMAIN,
+    CONF_NAME,
     CONF_FLAP_ENTITY,
     CONF_DOOR_ENTITY,
     CONF_DEBOUNCE_SECONDS,
@@ -45,9 +46,10 @@ class MailboxPostSensor(BinarySensorEntity):
         self.entry = entry
         self._attr_unique_id = f"{entry.entry_id}_mailbox_post"
 
+        device_name = entry.data.get(CONF_NAME, "Smart Mailbox")
         self._attr_device_info = {
             "identifiers": {(DOMAIN, entry.entry_id)},
-            "name": "Smart Mailbox",
+            "name": device_name,
             "manufacturer": "Danny Smolinsky",
             "model": "Smart Mailbox",
         }

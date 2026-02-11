@@ -5,7 +5,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 
-from .const import DOMAIN, SIGNAL_PREFIX
+from .const import DOMAIN, CONF_NAME, SIGNAL_PREFIX
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities):
@@ -28,9 +28,10 @@ class _MailboxButtonBase(ButtonEntity):
         self._state_ref = state_ref
         self._save = save_fn
 
+        device_name = entry.data.get(CONF_NAME, "Smart Mailbox")
         self._attr_device_info = {
             "identifiers": {(DOMAIN, entry.entry_id)},
-            "name": "Smart Mailbox",
+            "name": device_name,
             "manufacturer": "Danny Smolinsky",
             "model": "Smart Mailbox",
         }

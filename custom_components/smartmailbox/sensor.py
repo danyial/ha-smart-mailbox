@@ -10,6 +10,7 @@ from homeassistant.util import dt as dt_util
 
 from .const import (
     DOMAIN,
+    CONF_NAME,
     CONF_ENABLE_COUNTER,
     CONF_ENABLE_AGE,
     CONF_AGE_UNIT,
@@ -39,9 +40,10 @@ class _MailboxBaseSensor(SensorEntity):
         self._state_ref = state_ref
         self._attr_unique_id = unique_id
 
+        device_name = entry.data.get(CONF_NAME, "Smart Mailbox")
         self._attr_device_info = {
             "identifiers": {(DOMAIN, entry.entry_id)},
-            "name": "Smart Mailbox",
+            "name": device_name,
             "manufacturer": "Danny Smolinsky",
             "model": "Smart Mailbox",
         }
