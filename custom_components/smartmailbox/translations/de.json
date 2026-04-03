@@ -13,6 +13,24 @@
           "notify_service": "Benachrichtigungsdienst(e)"
         },
         "data_description": {
+          "flap_entity": "Unterstützt Binärsensoren und numerische Sensoren (z.B. Winkelsensoren)",
+          "door_entity": "Unterstützt Binärsensoren und numerische Sensoren (z.B. Winkelsensoren)"
+        }
+      },
+      "triggers": {
+        "title": "Trigger-Konfiguration",
+        "description": "Schwellenwerte für nicht-binäre Sensoren konfigurieren.",
+        "data": {
+          "flap_threshold": "Klappen-Sensor Schwellenwert",
+          "flap_threshold_direction": "Klappen-Trigger Richtung",
+          "door_threshold": "Tür-Sensor Schwellenwert",
+          "door_threshold_direction": "Tür-Trigger Richtung"
+        },
+        "data_description": {
+          "flap_threshold": "Auslösen wenn der Sensorwert diesen Schwellenwert überschreitet",
+          "flap_threshold_direction": "Auslösen wenn der Wert oberhalb oder unterhalb des Schwellenwerts liegt",
+          "door_threshold": "Auslösen wenn der Sensorwert diesen Schwellenwert überschreitet",
+          "door_threshold_direction": "Auslösen wenn der Wert oberhalb oder unterhalb des Schwellenwerts liegt"
         }
       }
     },
@@ -37,12 +55,20 @@
           "enable_counter": "Einwurf-Zähler aktivieren",
           "enable_age": "Post-Alter-Sensor aktivieren",
           "age_unit": "Alter-Einheit",
-          "reset_on_empty": "Zähler bei Leerung zurücksetzen"
+          "reset_on_empty": "Zähler bei Leerung zurücksetzen",
+          "flap_threshold": "Klappen-Sensor Schwellenwert",
+          "flap_threshold_direction": "Klappen-Trigger Richtung",
+          "door_threshold": "Tür-Sensor Schwellenwert",
+          "door_threshold_direction": "Tür-Trigger Richtung"
         },
         "data_description": {
-          "notify_message": "📬 Neue Post im Briefkasten!",
-          "door_notify_message": "📭 Post wurde entnommen!",
-          "age_unit": "Post-Alter in Stunden oder Tagen anzeigen"
+          "notify_message": "\ud83d\udcec Neue Post im Briefkasten!",
+          "door_notify_message": "\ud83d\udced Post wurde entnommen!",
+          "age_unit": "Post-Alter in Stunden oder Tagen anzeigen",
+          "flap_threshold": "Auslösen wenn der Sensorwert diesen Schwellenwert überschreitet",
+          "flap_threshold_direction": "Auslösen wenn der Wert oberhalb oder unterhalb des Schwellenwerts liegt",
+          "door_threshold": "Auslösen wenn der Sensorwert diesen Schwellenwert überschreitet",
+          "door_threshold_direction": "Auslösen wenn der Wert oberhalb oder unterhalb des Schwellenwerts liegt"
         }
       }
     }
