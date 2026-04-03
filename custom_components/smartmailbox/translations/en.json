@@ -13,6 +13,24 @@
           "notify_service": "Notification service(s)"
         },
         "data_description": {
+          "flap_entity": "Supports binary sensors and numeric sensors (e.g. angle sensors)",
+          "door_entity": "Supports binary sensors and numeric sensors (e.g. angle sensors)"
+        }
+      },
+      "triggers": {
+        "title": "Trigger Configuration",
+        "description": "Configure trigger thresholds for non-binary sensors.",
+        "data": {
+          "flap_threshold": "Flap sensor threshold",
+          "flap_threshold_direction": "Flap trigger direction",
+          "door_threshold": "Door sensor threshold",
+          "door_threshold_direction": "Door trigger direction"
+        },
+        "data_description": {
+          "flap_threshold": "Trigger when the sensor value crosses this threshold",
+          "flap_threshold_direction": "Trigger when value goes above or below the threshold",
+          "door_threshold": "Trigger when the sensor value crosses this threshold",
+          "door_threshold_direction": "Trigger when value goes above or below the threshold"
         }
       }
     },
@@ -37,12 +55,20 @@
           "enable_counter": "Enable delivery counter",
           "enable_age": "Enable mail age sensor",
           "age_unit": "Age unit",
-          "reset_on_empty": "Reset counter when emptied"
+          "reset_on_empty": "Reset counter when emptied",
+          "flap_threshold": "Flap sensor threshold",
+          "flap_threshold_direction": "Flap trigger direction",
+          "door_threshold": "Door sensor threshold",
+          "door_threshold_direction": "Door trigger direction"
         },
         "data_description": {
-          "notify_message": "📬 New mail in the mailbox!",
-          "door_notify_message": "📭 Mail has been collected!",
-          "age_unit": "Display mail age in hours or days"
+          "notify_message": "\ud83d\udcec New mail in the mailbox!",
+          "door_notify_message": "\ud83d\udced Mail has been collected!",
+          "age_unit": "Display mail age in hours or days",
+          "flap_threshold": "Trigger when the sensor value crosses this threshold",
+          "flap_threshold_direction": "Trigger when value goes above or below the threshold",
+          "door_threshold": "Trigger when the sensor value crosses this threshold",
+          "door_threshold_direction": "Trigger when value goes above or below the threshold"
         }
       }
     }

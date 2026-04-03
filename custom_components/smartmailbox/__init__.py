@@ -12,14 +12,51 @@ from homeassistant.util import dt as dt_util
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 
 from .const import (
-    DOMAIN, PLATFORMS,
+    DOMAIN,
+    PLATFORMS,
     SERVICE_RESET_COUNTER,
     SERVICE_MARK_EMPTY,
     SIGNAL_PREFIX,
-    STORAGE_KEY_PREFIX, STORAGE_VERSION,
+    STORAGE_KEY_PREFIX,
+    STORAGE_VERSION,
+    CONF_FLAP_ENTITY,
+    CONF_DOOR_ENTITY,
+    CONF_FLAP_TRIGGER_MODE,
+    CONF_DOOR_TRIGGER_MODE,
+    TRIGGER_MODE_BINARY,
+    TRIGGER_MODE_THRESHOLD,
 )
 
 _LOGGER = logging.getLogger(__name__)
+
+
+async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
+    """Migrate config entries to the current version."""
+    _LOGGER.debug("Migrating from version %s", config_entry.version)
+
+    if config_entry.version == 1:
+        # V1 → V2: Add trigger mode fields for non-binary sensor support.
+        # Existing entries always used binary sensors, so we set binary mode.
+        new_data = {**config_entry.data}
+        flap = new_data.get(CONF_FLAP_ENTITY, "")
+        door = new_data.get(CONF_DOOR_ENTITY, "")
+
+        new_data[CONF_FLAP_TRIGGER_MODE] = (
+            TRIGGER_MODE_THRESHOLD
+            if not flap.startswith("binary_sensor.") and flap
+            else TRIGGER_MODE_BINARY
+        )
+        new_data[CONF_DOOR_TRIGGER_MODE] = (
+            TRIGGER_MODE_THRESHOLD
+            if not door.startswith("binary_sensor.") and door
+            else TRIGGER_MODE_BINARY
+        )
+
+        hass.config_entries.async_update_entry(config_entry, data=new_data, version=2)
+        _LOGGER.info("Migration to version 2 successful")
+
+    return True
+
 
 @dataclass
 class MailboxState:
@@ -30,8 +67,10 @@ class MailboxState:
     notified_for_current_post: bool = False
     last_flap_trigger: datetime | None = None
 
+
 def _dt_to_iso(dt: datetime | None) -> str | None:
     return dt.isoformat() if dt else None
+
 
 def _iso_to_dt(value: str | None) -> datetime | None:
     if not value:
@@ -45,6 +84,7 @@ def _iso_to_dt(value: str | None) -> datetime | None:
     except Exception:
         return None
 
+
 async def _load_state(hass: HomeAssistant, entry: ConfigEntry) -> MailboxState:
     store = Store(hass, STORAGE_VERSION, f"{STORAGE_KEY_PREFIX}{entry.entry_id}")
     data = await store.async_load() or {}
@@ -57,16 +97,22 @@ async def _load_state(hass: HomeAssistant, entry: ConfigEntry) -> MailboxState:
         last_flap_trigger=_iso_to_dt(data.get("last_flap_trigger")),
     )
 
-async def _save_state(hass: HomeAssistant, entry: ConfigEntry, state: MailboxState) -> None:
+
+async def _save_state(
+    hass: HomeAssistant, entry: ConfigEntry, state: MailboxState
+) -> None:
     store = Store(hass, STORAGE_VERSION, f"{STORAGE_KEY_PREFIX}{entry.entry_id}")
-    await store.async_save({
-        "post_present": state.post_present,
-        "last_delivery": _dt_to_iso(state.last_delivery),
-        "last_empty": _dt_to_iso(state.last_empty),
-        "counter": state.counter,
-        "notified_for_current_post": state.notified_for_current_post,
-        "last_flap_trigger": _dt_to_iso(state.last_flap_trigger),
-    })
+    await store.async_save(
+        {
+            "post_present": state.post_present,
+            "last_delivery": _dt_to_iso(state.last_delivery),
+            "last_empty": _dt_to_iso(state.last_empty),
+            "counter": state.counter,
+            "notified_for_current_post": state.notified_for_current_post,
+            "last_flap_trigger": _dt_to_iso(state.last_flap_trigger),
+        }
+    )
+
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data.setdefault(DOMAIN, {})
@@ -77,6 +123,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     }
 
     if not hass.data[DOMAIN].get("_service_registered"):
+
         async def handle_reset_counter(call: ServiceCall) -> None:
             target_entry_id = call.data.get("entry_id")
             for entry_id, data in list(hass.data[DOMAIN].items()):
@@ -117,9 +164,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True
 
+
 async def _update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
     # Reload to apply option changes (enable/disable sensors, debounce, notify, etc.)
     await hass.config_entries.async_reload(entry.entry_id)
+
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     unloaded = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
