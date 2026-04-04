@@ -28,4 +28,23 @@ jobs:
 
       - name: Update coverage badge
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
-        uses: we-cli/coverage-badge-action@main
+        run: |
+          COVERAGE=$(jq -r '.totals.percent_covered_display' coverage.json)
+          COV_INT=${COVERAGE%.*}
+          if [ "$COV_INT" -ge 90 ]; then COLOR="brightgreen"
+          elif [ "$COV_INT" -ge 80 ]; then COLOR="green"
+          elif [ "$COV_INT" -ge 70 ]; then COLOR="yellowgreen"
+          elif [ "$COV_INT" -ge 50 ]; then COLOR="yellow"
+          else COLOR="red"; fi
+
+          curl -s "https://img.shields.io/badge/coverage-${COVERAGE}%25-${COLOR}" > /tmp/coverage.svg
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin gh-pages
+          git checkout gh-pages
+          mkdir -p badges
+          cp /tmp/coverage.svg badges/coverage.svg
+          git add badges/coverage.svg
+          git diff --cached --quiet || git commit -m "Update coverage badge: ${COVERAGE}%"
+          git push origin gh-pages
